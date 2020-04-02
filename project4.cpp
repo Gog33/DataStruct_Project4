@@ -179,9 +179,12 @@ ArrayGLL<DT>::ArrayGLL() {
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(int size) {
     myGLL = new GLRow<DT>[size];
+    for (int i = 0; i < size - 1; ++i) {
+        myGLL[i].setNext[i + 1];
+    }
     maxSize = size;
     firstElement = -1;
-    firstFree = -1;
+    firstFree = 0;
 }
 
 template <class DT>
