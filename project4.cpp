@@ -144,6 +144,8 @@ public:
     int getFirstElement();
     void setFirstFree(int pos);
     void setFirstElement(int pos);
+    void insertAChild(DT& parent, DT& child); //inserts a child onto a parent node
+    void removeANode(DT& node); //removes input node from list structure
     ~ArrayGLL(); //destructor
 private:
     void recurDisplay(int startPos); //recursive call for display
@@ -365,63 +367,23 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
 }
 
 template <class DT>
+void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
+    
+}
+
+template <class DT>
+void ArrayGLL<DT>::removeANode(DT& node) {
+
+}
+
+template <class DT>
 ArrayGLL<DT>::~ArrayGLL() {
     delete[] myGLL;
 }
 
 int main() {
-    //NOTE: this main method is designed for reading the input.txt file provided to students
-    int noElements, v, n, d;
-    int keyValue;
-    int tempValue = 0;
-
-    GLRow<int> oneRow(tempValue); //constructs basic GLRow instance
-                          //this will be used to create GLRows for ArrayGLL instance
-
-    //first line of input contains number of sequences
-    cin >> noElements;
-    cout << "firstGLL:" << endl;
-    ArrayGLL<int> firstGLL(noElements); //constructs firstGLL with size of noElements
-
-    for (int i = 0; i < noElements; ++i) {
-        cin >> v >> n >> d;
-        oneRow.setInfo(v);
-        oneRow.setNext(n);
-        oneRow.setDown(d);
-        firstGLL[i] = oneRow;
-    }
-    firstGLL.setFirstFree(8);
-    firstGLL.setFirstElement(2);
-
-    cout << firstGLL;
-
-    firstGLL.display();
-
-    keyValue = 35;
-    cout << keyValue << ", position: " << firstGLL.find(keyValue)
-        << ", parent pos: " << firstGLL.parentPos(keyValue) << endl;
-    firstGLL.findDisplayPath(keyValue);
-
-    keyValue = 10;
-    cout << keyValue << ", position: " << firstGLL.find(keyValue)
-        << ", parent pos: " << firstGLL.parentPos(keyValue) << endl;
-    firstGLL.findDisplayPath(keyValue);
-
-    cout << "no. free locations: " << firstGLL.noFree() << endl;
-    cout << "no. elements: " << firstGLL.size() << endl;
-
-    cout << "secondGLL:" << endl;
-    ArrayGLL<int>* secondGLL = new ArrayGLL<int>(firstGLL);
-
-    keyValue = 456;
-    (*secondGLL)[11].setInfo(keyValue);
-
-    (*secondGLL).display();
-    cout << keyValue << ", position: " << (*secondGLL).find(keyValue)
-        << ", parent pos: " << (*secondGLL).parentPos(keyValue) << endl;
-    (*secondGLL).findDisplayPath(keyValue);
-
-    delete secondGLL;
+    
+    //placeholder for new main method
 
     return 0;
 }
