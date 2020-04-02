@@ -382,14 +382,41 @@ void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
     int parentIndex = find(parent); //index of parent node
     int newIndex = findFree(); //index of new node (former free node)
 
-    myGLL[newIndex] = GLRow<DT>(child); //sets index to new node
+    myGLL[newIndex] = GLRow<DT>(child); //creates new child node
     myGLL[newIndex].setNext(myGLL[parentIndex].getDown()); //next of child set to down of parent
     myGLL[parentIndex].setDown(newIndex); //down of parent set to child index
 }
 
 template <class DT>
 void ArrayGLL<DT>::removeANode(DT& node) {
+    int nodeIndex = find(node); //index of node to be removed
+    int parentIndex = parentPos(node); //index of parent of node
 
+    if (myGLL[nodeIndex].getDown() == -1) { //if node is a leaf node:
+        if (myGLL[nodeIndex].getNext() == -1) { //if there are no other leaf nodes past the node:
+            if (myGLL[parentIndex].getDown() == nodeIndex) { //if the node is the down of parent:
+                myGLL[parentIndex].setDown(-1); //down set to zero
+            }
+            else { //if node is not the down of parent:
+                int currPos = myGLL[parentIndex].getDown();
+                while (myGLL[currPos].getNext() != nodeIndex) { //finding node with next leading to removed node
+                    currPos = myGLL[currPos].getNext();
+                }
+                myGLL[currPos].setNext(-1); //next set to zero
+            }
+            //removing node and adding it to free nodes:
+            delete myGLL[nodeIndex].getInfo();
+            myGLL[nodeIndex].setNext(firstFree); //set next to current first free
+            firstFree = nodeIndex; //first free set to removed node index
+        }
+        else { //if there are other leaf nodes past the node:
+
+        }
+    }
+
+    else { //if node is not a leaf node:
+
+    }
 }
 
 template <class DT>
