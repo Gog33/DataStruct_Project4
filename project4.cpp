@@ -393,25 +393,30 @@ void ArrayGLL<DT>::removeANode(DT& node) {
     int parentIndex = parentPos(node); //index of parent of node
 
     if (myGLL[nodeIndex].getDown() == -1) { //if node is a leaf node:
-        if (myGLL[nodeIndex].getNext() == -1) { //if there are no other leaf nodes past the node:
-            if (myGLL[parentIndex].getDown() == nodeIndex) { //if the node is the down of parent:
-                myGLL[parentIndex].setDown(-1); //down set to zero
+        if (myGLL[parentIndex].getDown() == nodeIndex) { //if the node is the down of parent:
+            if (myGLL[nodeIndex].getNext == -1) { //if node has no next
+                myGLL[parentIndex].setDown(-1); //down set to -1
             }
-            else { //if node is not the down of parent:
-                int currPos = myGLL[parentIndex].getDown();
-                while (myGLL[currPos].getNext() != nodeIndex) { //finding node with next leading to removed node
-                    currPos = myGLL[currPos].getNext();
-                }
-                myGLL[currPos].setNext(-1); //next set to zero
+            else { //if node has a next
+                myGLL[parentIndex].setDown(myGLL[nodeIndex].getNext()); //down set to node's next
             }
-            //removing node and adding it to free nodes:
-            delete myGLL[nodeIndex].getInfo();
-            myGLL[nodeIndex].setNext(firstFree); //set next to current first free
-            firstFree = nodeIndex; //first free set to removed node index
         }
-        else { //if there are other leaf nodes past the node:
-
+        else { //if node is not the down of parent:
+            int currPos = myGLL[parentIndex].getDown();
+            while (myGLL[currPos].getNext() != nodeIndex) { //finding node with next leading to removed node
+                currPos = myGLL[currPos].getNext();
+            }
+            if (myGLL[nodeIndex].getNext == -1) { //if node has no next
+                myGLL[currPos].setNext(-1); //next set to -1
+            }
+            else { //if node has a next
+                myGLL[currPos].setNext(myGLL[nodeIndex].getNext()); //next set to node's next
+            }
         }
+        //removing node and adding it to free nodes:
+        delete myGLL[nodeIndex].getInfo();
+        myGLL[nodeIndex].setNext(firstFree); //set next to current first free
+        firstFree = nodeIndex; //first free set to removed node index
     }
 
     else { //if node is not a leaf node:
