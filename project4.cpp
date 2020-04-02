@@ -372,15 +372,19 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
 
 template <class DT>
 int ArrayGLL<DT>::findFree() {
-    int free = firstFree;
-    firstFree = myGLL[free].getNext();
-    return free;
+    int free = firstFree; //index of current firstFree
+    firstFree = myGLL[free].getNext(); //firstFree set to next free index
+    return free; //returns former firstFree index
 }
 
 template <class DT>
 void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
-    int parentIndex = find(parent);
+    int parentIndex = find(parent); //index of parent node
+    int newIndex = findFree(); //index of new node (former free node)
 
+    myGLL[newIndex] = GLRow<DT>(child); //sets index to new node
+    myGLL[newIndex].setNext(myGLL[parentIndex].getDown()); //next of child set to down of parent
+    myGLL[parentIndex].setDown(newIndex); //down of parent set to child index
 }
 
 template <class DT>
