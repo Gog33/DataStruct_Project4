@@ -144,6 +144,7 @@ public:
     int getFirstElement();
     void setFirstFree(int pos);
     void setFirstElement(int pos);
+    int findFree(); //returns firstFree and sets the next free node to firstFree
     void insertAChild(DT& parent, DT& child); //inserts a child onto a parent node
     void removeANode(DT& node); //removes input node from list structure
     ~ArrayGLL(); //destructor
@@ -367,8 +368,16 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
 }
 
 template <class DT>
+int ArrayGLL<DT>::findFree() {
+    int free = firstFree;
+    firstFree = myGLL[free].getNext();
+    return free;
+}
+
+template <class DT>
 void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
-    
+    int parentIndex = find(parent);
+
 }
 
 template <class DT>
