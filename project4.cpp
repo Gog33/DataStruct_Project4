@@ -30,6 +30,7 @@ public:
     void setNext(int n); //sets next
     void setDown(int d); //sets down
     void setInfo(DT& i); //sets info
+    void deleteInfo(); //deletes info (added for removeANode method)
     ~GLRow(); //destructor
 };
 
@@ -104,8 +105,13 @@ void GLRow<DT>::setInfo(DT& i) {
 }
 
 template <class DT>
-GLRow<DT>::~GLRow() {
+void GLRow<DT>::deleteInfo() {
     delete[] _info;
+}
+
+template <class DT>
+GLRow<DT>::~GLRow() {
+    deleteInfo();
 }
 
 template <class DT>
@@ -416,7 +422,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
             }
         }
         //removing node and adding it to free nodes:
-        myGLL[nodeIndex];
+        myGLL[nodeIndex].deleteInfo();
         myGLL[nodeIndex].setNext(firstFree); //set next to current first free
         firstFree = nodeIndex; //first free set to removed node index
     }
@@ -432,7 +438,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
         //sets down to -1 if leftIndex has no next or to leftIndex's next
 
         //removes left-most index
-        myGLL[leftIndex];
+        myGLL[leftIndex].deleteInfo();
         myGLL[leftIndex].setNext(firstFree);
         firstFree = leftIndex;
     }
