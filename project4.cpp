@@ -212,14 +212,13 @@ ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
 
 template <class DT>
 void ArrayGLL<DT>::recurDisplay(int startPos) {
-    cout << myGLL[startPos].getInfo(); //prints out current GLRow
+    cout << myGLL[startPos].getInfo() << " "; //prints out current GLRow
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection
-        cout << " (";
+        cout << "(";
         recurDisplay(currPos); //recursive call to next GLRow and its children
         while (myGLL[currPos].getNext() != -1) { //while there is a next node
             currPos = myGLL[currPos].getNext();
-            cout << " ";
             recurDisplay(currPos);
         }
         cout << ")";
@@ -379,12 +378,16 @@ int ArrayGLL<DT>::findFree() {
 
 template <class DT>
 void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
-    int parentIndex = find(parent); //index of parent node
     int newIndex = findFree(); //index of new node (former free node)
-
-    myGLL[newIndex] = GLRow<DT>(child); //creates new child node
-    myGLL[newIndex].setNext(myGLL[parentIndex].getDown()); //next of child set to down of parent
-    myGLL[parentIndex].setDown(newIndex); //down of parent set to child index
+    myGLL[newIndex] = GLRow<DT>(child); //creates new node
+    if (parent == -1) { //if there is no parent
+        firstElement = newIndex; //root set to new node
+    }
+    else { //if there is a parent
+        int parentIndex = find(parent); //index of parent node
+        myGLL[newIndex].setNext(myGLL[parentIndex].getDown()); //next of child set to down of parent
+        myGLL[parentIndex].setDown(newIndex); //down of parent set to child index
+    }
 }
 
 template <class DT>
