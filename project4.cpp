@@ -221,7 +221,7 @@ void ArrayGLL<DT>::recurDisplay(int startPos) {
             currPos = myGLL[currPos].getNext();
             recurDisplay(currPos);
         }
-        cout << ")";
+        cout << ") ";
     }
 }
 
@@ -423,7 +423,19 @@ void ArrayGLL<DT>::removeANode(DT& node) {
     }
 
     else { //if node is not a leaf node:
+        int leftIndex = nodeIndex;
+        while (myGLL[leftIndex].getDown() != -1) {
+            leftIndex = myGLL[leftIndex].getDown();
+        } //finds left-most element
 
+        myGLL[nodeIndex].setInfo(myGLL[leftIndex].getInfo());//left-most info set to index to be removed
+        myGLL[parentPos(leftIndex)].setDown(myGLL[leftIndex].getNext());
+        //sets down to -1 if leftIndex has no next or to leftIndex's next
+
+        //removes left-most index
+        delete myGLL[leftIndex].getInfo();
+        myGLL[leftIndex].setNext(firstFree);
+        firstFree = leftIndex;
     }
 }
 
