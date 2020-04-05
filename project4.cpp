@@ -180,7 +180,7 @@ template <class DT>
 ArrayGLL<DT>::ArrayGLL(int size) {
     myGLL = new GLRow<DT>[size];
     for (int i = 0; i < size - 1; ++i) {
-        myGLL[i].setNext[i + 1];
+        myGLL[i].setNext(i + 1);
     }
     maxSize = size;
     firstElement = -1;
@@ -228,7 +228,6 @@ void ArrayGLL<DT>::recurDisplay(int startPos) {
 template <class DT>
 void ArrayGLL<DT>::display() {
     recurDisplay(firstElement);
-    cout << endl;
 }
 
 template <class DT>
@@ -379,7 +378,7 @@ int ArrayGLL<DT>::findFree() {
 template <class DT>
 void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
     int newIndex = findFree(); //index of new node (former free node)
-    myGLL[newIndex] = GLRow<DT>(child); //creates new node
+    myGLL[newIndex].setInfo(child); //creates new node
     if (parent == -1) { //if there is no parent
         firstElement = newIndex; //root set to new node
     }
@@ -397,7 +396,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
 
     if (myGLL[nodeIndex].getDown() == -1) { //if node is a leaf node:
         if (myGLL[parentIndex].getDown() == nodeIndex) { //if the node is the down of parent:
-            if (myGLL[nodeIndex].getNext == -1) { //if node has no next
+            if (myGLL[nodeIndex].getNext() == -1) { //if node has no next
                 myGLL[parentIndex].setDown(-1); //down set to -1
             }
             else { //if node has a next
@@ -409,7 +408,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
             while (myGLL[currPos].getNext() != nodeIndex) { //finding node with next leading to removed node
                 currPos = myGLL[currPos].getNext();
             }
-            if (myGLL[nodeIndex].getNext == -1) { //if node has no next
+            if (myGLL[nodeIndex].getNext() == -1) { //if node has no next
                 myGLL[currPos].setNext(-1); //next set to -1
             }
             else { //if node has a next
@@ -417,7 +416,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
             }
         }
         //removing node and adding it to free nodes:
-        delete myGLL[nodeIndex].getInfo();
+        myGLL[nodeIndex];
         myGLL[nodeIndex].setNext(firstFree); //set next to current first free
         firstFree = nodeIndex; //first free set to removed node index
     }
@@ -433,7 +432,7 @@ void ArrayGLL<DT>::removeANode(DT& node) {
         //sets down to -1 if leftIndex has no next or to leftIndex's next
 
         //removes left-most index
-        delete myGLL[leftIndex].getInfo();
+        myGLL[leftIndex];
         myGLL[leftIndex].setNext(firstFree);
         firstFree = leftIndex;
     }
@@ -445,8 +444,47 @@ ArrayGLL<DT>::~ArrayGLL() {
 }
 
 int main() {
-    
-    //placeholder for new main method
+    ArrayGLL<int>* firstGLL;
+    int noElements;
+    char command;
+    int node1, node2;
+    int value;
+    //variables initialized
+
+    cin >> noElements;
+
+    firstGLL = new ArrayGLL<int>(noElements);
+    while (cin.eof()) {
+        cin >> command;
+        switch (command) {
+            case 'I':
+                cin >> node1 >> node2;
+                (*firstGLL).insertAChild(node1, node2);
+                cout << "Element inserted";
+                break;
+            case 'R':
+                cin >> node1;
+                (*firstGLL).removeANode(node1);
+                cout << "Element removed";
+                break;
+            case 'F':
+                cin >> node1;
+                value = (*firstGLL).find(node1);
+                cout << "The element " << node1 << " is found at index: " << value;
+                break;
+            case 'P':
+                cin >> node1;
+                value = (*firstGLL).parentPos(node1);
+                cout << "The parent of " << node1 << " is: " << (*firstGLL)[value].getInfo();
+                break;
+            case 'D':
+                (*firstGLL).display();
+                break;
+            default:
+                break;
+        }
+        cout << endl;
+    }
 
     return 0;
 }
