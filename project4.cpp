@@ -30,7 +30,6 @@ public:
     void setNext(int n); //sets next
     void setDown(int d); //sets down
     void setInfo(DT& i); //sets info
-    void deleteInfo(); //deletes info (added for removeANode method)
     ~GLRow(); //destructor
 };
 
@@ -42,9 +41,7 @@ ostream& operator<< (ostream& s, const GLRow<DT>& oneGLRow) {
 
 template <class DT>
 GLRow<DT>::GLRow() {
-    //cout << "baseline constructor called" << endl;
-    int temp = 999;
-    _info = &temp;
+    _info = NULL;
     _next = -1;
     _down = -1;
 }
@@ -101,17 +98,13 @@ void GLRow<DT>::setDown(int d) {
 
 template <class DT>
 void GLRow<DT>::setInfo(DT& i) {
+    _info = &i;
     *_info = i;
 }
 
 template <class DT>
-void GLRow<DT>::deleteInfo() {
-    delete[] _info;
-}
-
-template <class DT>
 GLRow<DT>::~GLRow() {
-    deleteInfo();
+    delete[] _info;
 }
 
 template <class DT>
@@ -150,6 +143,7 @@ public:
     int getFirstElement();
     void setFirstFree(int pos);
     void setFirstElement(int pos);
+    void setAllInfo(DT& val); //sets all info to input value
     int findFree(); //returns firstFree and sets the next free node to firstFree
     void insertAChild(DT& parent, DT& child); //inserts a child onto a parent node
     void removeANode(DT& node); //removes input node from list structure
@@ -190,7 +184,7 @@ ArrayGLL<DT>::ArrayGLL(int size) {
     }
     maxSize = size;
     firstElement = -1;
-    firstFree = 0;
+    firstFree = -1;
 }
 
 template <class DT>
@@ -218,22 +212,24 @@ ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
 
 template <class DT>
 void ArrayGLL<DT>::recurDisplay(int startPos) {
-    cout << myGLL[startPos].getInfo() << " "; //prints out current GLRow
+    cout << myGLL[startPos].getInfo(); //prints out current GLRow
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection
-        cout << "(";
+        cout << " (";
         recurDisplay(currPos); //recursive call to next GLRow and its children
         while (myGLL[currPos].getNext() != -1) { //while there is a next node
             currPos = myGLL[currPos].getNext();
+            cout << " ";
             recurDisplay(currPos);
         }
-        cout << ") ";
+        cout << ")";
     }
 }
 
 template <class DT>
 void ArrayGLL<DT>::display() {
     recurDisplay(firstElement);
+    cout << endl;
 }
 
 template <class DT>
@@ -375,6 +371,13 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
 }
 
 template <class DT>
+void ArrayGLL<DT>::setAllInfo(DT& val) {
+    for (int i = 0; i < maxSize; ++i) {
+        myGLL[i].setInfo(val);
+    }
+}
+
+template <class DT>
 int ArrayGLL<DT>::findFree() {
     int free = firstFree; //index of current firstFree
     firstFree = myGLL[free].getNext(); //firstFree set to next free index
@@ -386,7 +389,7 @@ void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
     int newIndex = findFree(); //index of new node (former free node)
     myGLL[newIndex].setInfo(child); //creates new node
     if (parent == -1) { //if there is no parent
-        firstElement = newIndex; //root set to new node
+        setFirstElement(newIndex); //root set to new node
     }
     else { //if there is a parent
         int parentIndex = find(parent); //index of parent node
@@ -422,7 +425,6 @@ void ArrayGLL<DT>::removeANode(DT& node) {
             }
         }
         //removing node and adding it to free nodes:
-        myGLL[nodeIndex].deleteInfo();
         myGLL[nodeIndex].setNext(firstFree); //set next to current first free
         firstFree = nodeIndex; //first free set to removed node index
     }
@@ -438,7 +440,6 @@ void ArrayGLL<DT>::removeANode(DT& node) {
         //sets down to -1 if leftIndex has no next or to leftIndex's next
 
         //removes left-most index
-        myGLL[leftIndex].deleteInfo();
         myGLL[leftIndex].setNext(firstFree);
         firstFree = leftIndex;
     }
@@ -451,6 +452,7 @@ ArrayGLL<DT>::~ArrayGLL() {
 
 int main() {
     ArrayGLL<int>* firstGLL;
+    int freeVal = 999; //sets all info initially to 999
     int noElements;
     char command;
     int node1, node2;
@@ -460,37 +462,40 @@ int main() {
     cin >> noElements;
 
     firstGLL = new ArrayGLL<int>(noElements);
-    while (cin.eof()) {
+
+    while (!cin.eof()) {
         cin >> command;
         switch (command) {
-            case 'I':
-                cin >> node1 >> node2;
-                (*firstGLL).insertAChild(node1, node2);
-                cout << "Element inserted";
-                break;
-            case 'R':
-                cin >> node1;
-                (*firstGLL).removeANode(node1);
-                cout << "Element removed";
-                break;
-            case 'F':
-                cin >> node1;
-                value = (*firstGLL).find(node1);
-                cout << "The element " << node1 << " is found at index: " << value;
-                break;
-            case 'P':
-                cin >> node1;
-                value = (*firstGLL).parentPos(node1);
-                cout << "The parent of " << node1 << " is: " << (*firstGLL)[value].getInfo();
-                break;
-            case 'D':
-                (*firstGLL).display();
-                break;
-            default:
-                break;
+        case 'I':
+            cin >> node1 >> node2;
+            (*firstGLL).insertAChild(node1, node2);
+            cout << "Element inserted";
+            break;
+        case 'R':
+            cin >> node1;
+            (*firstGLL).removeANode(node1);
+            cout << "Element removed";
+            break;
+        case 'F':
+            cin >> node1;
+            value = (*firstGLL).find(node1);
+            cout << "The element " << node1 << " is found at index: " << value;
+            break;
+        case 'P':
+            cin >> node1;
+            value = (*firstGLL).parentPos(node1);
+            cout << "The parent of " << node1 << " is: " << (*firstGLL)[value].getInfo();
+            break;
+        case 'D':
+            (*firstGLL).display();
+            break;
+        default:
+            break;
         }
         cout << endl;
     }
+
+    delete firstGLL;
 
     return 0;
 }
