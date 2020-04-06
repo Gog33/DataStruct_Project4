@@ -500,6 +500,7 @@ int main() {
             break;
         }
         cout << endl;
+        cin >> ws;
     }
     
     delete firstGLL;
