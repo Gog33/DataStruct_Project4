@@ -98,7 +98,7 @@ void GLRow<DT>::setDown(int d) {
 
 template <class DT>
 void GLRow<DT>::setInfo(DT& i) {
-    _info = &i;
+    _info = &i; 
     *_info = i;
 }
 
@@ -143,7 +143,7 @@ public:
     int getFirstElement();
     void setFirstFree(int pos);
     void setFirstElement(int pos);
-    void setAllInfo(DT& val); //sets all info to input value
+    //void setAllInfo(DT& val); //sets all info to input value  --REMOVED--
     int findFree(); //returns firstFree and sets the next free node to firstFree
     void insertAChild(DT& parent, DT& child); //inserts a child onto a parent node
     void removeANode(DT& node); //removes input node from list structure
@@ -184,7 +184,7 @@ ArrayGLL<DT>::ArrayGLL(int size) {
     }
     maxSize = size;
     firstElement = -1;
-    firstFree = -1;
+    firstFree = 0;
 }
 
 template <class DT>
@@ -370,12 +370,14 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
     firstElement = pos;
 }
 
+/*
 template <class DT>
 void ArrayGLL<DT>::setAllInfo(DT& val) {
     for (int i = 0; i < maxSize; ++i) {
         myGLL[i].setInfo(val);
     }
 }
+*/
 
 template <class DT>
 int ArrayGLL<DT>::findFree() {
@@ -387,13 +389,17 @@ int ArrayGLL<DT>::findFree() {
 template <class DT>
 void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
     int newIndex = findFree(); //index of new node (former free node)
-    myGLL[newIndex].setInfo(child); //creates new node
+    GLRow<DT> oneRow(child);
+    myGLL[newIndex] = oneRow;
     if (parent == -1) { //if there is no parent
         setFirstElement(newIndex); //root set to new node
     }
     else { //if there is a parent
         int parentIndex = find(parent); //index of parent node
         myGLL[newIndex].setNext(myGLL[parentIndex].getDown()); //next of child set to down of parent
+        if (myGLL[newIndex].getNext() >= maxSize) {
+            myGLL[newIndex].setNext(-1);
+        }
         myGLL[parentIndex].setDown(newIndex); //down of parent set to child index
     }
 }
@@ -452,13 +458,12 @@ ArrayGLL<DT>::~ArrayGLL() {
 
 int main() {
     ArrayGLL<int>* firstGLL;
-    int freeVal = 999; //sets all info initially to 999
     int noElements;
     char command;
     int node1, node2;
     int value;
     //variables initialized
-
+    
     cin >> noElements;
 
     firstGLL = new ArrayGLL<int>(noElements);
@@ -494,7 +499,7 @@ int main() {
         }
         cout << endl;
     }
-
+    
     delete firstGLL;
 
     return 0;
