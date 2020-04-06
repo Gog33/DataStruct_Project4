@@ -98,7 +98,6 @@ void GLRow<DT>::setDown(int d) {
 
 template <class DT>
 void GLRow<DT>::setInfo(DT& i) {
-    _info = &i; 
     *_info = i;
 }
 
@@ -229,7 +228,6 @@ void ArrayGLL<DT>::recurDisplay(int startPos) {
 template <class DT>
 void ArrayGLL<DT>::display() {
     recurDisplay(firstElement);
-    cout << endl;
 }
 
 template <class DT>
@@ -341,6 +339,7 @@ int ArrayGLL<DT>::recurParentPos(DT& key, int startPos, int lastPos) {
 
 template <class DT>
 int ArrayGLL<DT>::parentPos(DT& key) {
+    cout << "key:" << key << endl;
     return recurParentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
     //lastPos initially set to -1, as the first element has no parent position
 }
@@ -407,9 +406,9 @@ void ArrayGLL<DT>::insertAChild(DT& parent, DT& child) {
 template <class DT>
 void ArrayGLL<DT>::removeANode(DT& node) {
     int nodeIndex = find(node); //index of node to be removed
-    int parentIndex = parentPos(node); //index of parent of node
 
     if (myGLL[nodeIndex].getDown() == -1) { //if node is a leaf node:
+        int parentIndex = parentPos(node); //index of parent of node
         if (myGLL[parentIndex].getDown() == nodeIndex) { //if the node is the down of parent:
             if (myGLL[nodeIndex].getNext() == -1) { //if node has no next
                 myGLL[parentIndex].setDown(-1); //down set to -1
@@ -437,18 +436,31 @@ void ArrayGLL<DT>::removeANode(DT& node) {
 
     else { //if node is not a leaf node:
         int leftIndex = nodeIndex;
+        int leftParent = -1;
         while (myGLL[leftIndex].getDown() != -1) {
+            leftParent = leftIndex;
             leftIndex = myGLL[leftIndex].getDown();
-        } //finds left-most element
+        } //finds left-most element + its parent
+        
+        DT tempInfo = myGLL[leftIndex].getInfo();
+        int tempNext = myGLL[nodeIndex].getNext();
+        int tempDown = myGLL[nodeIndex].getDown();
+        GLRow<DT> oneRow(tempInfo);
+        oneRow.setNext(tempNext);
+        oneRow.setDown(tempDown);
+        myGLL[nodeIndex] = oneRow; //left-most info set to index to be removed
+        
+        int leftNext = myGLL[leftIndex].getNext();
+        //next of left-most node, -1 or otherwise
 
-        myGLL[nodeIndex].setInfo(myGLL[leftIndex].getInfo());//left-most info set to index to be removed
-        myGLL[parentPos(leftIndex)].setDown(myGLL[leftIndex].getNext());
-        //sets down to -1 if leftIndex has no next or to leftIndex's next
+        myGLL[leftParent].setDown(leftNext);
+        //sets down of leftParent to left-most node's next value
 
         //removes left-most index
         myGLL[leftIndex].setNext(firstFree);
         firstFree = leftIndex;
     }
+    
 }
 
 template <class DT>
