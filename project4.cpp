@@ -142,7 +142,6 @@ public:
     int getFirstElement();
     void setFirstFree(int pos);
     void setFirstElement(int pos);
-    //void setAllInfo(DT& val); //sets all info to input value  --REMOVED--
     int findFree(); //returns firstFree and sets the next free node to firstFree
     void insertAChild(DT& parent, DT& child); //inserts a child onto a parent node
     void removeANode(DT& node); //removes input node from list structure
@@ -211,17 +210,16 @@ ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
 
 template <class DT>
 void ArrayGLL<DT>::recurDisplay(int startPos) {
-    cout << myGLL[startPos].getInfo(); //prints out current GLRow
+    cout << myGLL[startPos].getInfo() << " "; //prints out current GLRow
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection
-        cout << " (";
+        cout << "(";
         recurDisplay(currPos); //recursive call to next GLRow and its children
         while (myGLL[currPos].getNext() != -1) { //while there is a next node
             currPos = myGLL[currPos].getNext();
-            cout << " ";
             recurDisplay(currPos);
         }
-        cout << ")";
+        cout << ") ";
     }
 }
 
@@ -369,15 +367,6 @@ void ArrayGLL<DT>::setFirstElement(int pos) {
     firstElement = pos;
 }
 
-/*
-template <class DT>
-void ArrayGLL<DT>::setAllInfo(DT& val) {
-    for (int i = 0; i < maxSize; ++i) {
-        myGLL[i].setInfo(val);
-    }
-}
-*/
-
 template <class DT>
 int ArrayGLL<DT>::findFree() {
     int free = firstFree; //index of current firstFree
@@ -478,6 +467,7 @@ int main() {
     
     cin >> noElements;
 
+    cout << "The size of the array is " << noElements << endl;
     firstGLL = new ArrayGLL<int>(noElements);
 
     while (!cin.eof()) {
